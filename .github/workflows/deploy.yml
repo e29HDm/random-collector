@@ -1,0 +1,26 @@
+name: Deploy to Github Pages
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  gh-pages-deploy:
+    name: Deploying to Github Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+      - name: Install packages
+        run: npm ci
+      - name: Set Creds
+        run: git config user.name "e29HDm" && git config user.email "delignekylian@gmail.com"
+      - name: Deploy
+        run: npm run deploy
