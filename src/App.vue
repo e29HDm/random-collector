@@ -20,13 +20,12 @@ type Holder = {
   quantity: number;
 };
 
-const token = ref<Token | null>(null);
-watch([collectionId, tokenId], async ([collectionId, tokenId]) => {
+const getTokenData = async (collectionId: string, tokenId: string) => {
   if (!collectionId || !tokenId) return;
   const data = await client.request(`
 query Collectors {
   token(
-    where: {token_id: {_eq: ${tokenId}}, fa_contract: {_eq: ${collectionId}}}
+    where: {token_id: {_eq: "${tokenId}"}, fa_contract: {_eq: "${collectionId}"}}
   ) {
     name
     supply
@@ -43,6 +42,21 @@ query Collectors {
     errorMessage.value = "";
   } else {
     errorMessage.value = "Token not found";
+  }
+};
+
+const token = ref<Token | null>(null);
+watch([collectionId, tokenId], async ([collectionId, tokenId]) => {
+  getTokenData(collectionId, tokenId);
+  // push state to url only if it's not equal to current url
+  if (
+    window.location.search !== `?collection=${collectionId}&token=${tokenId}`
+  ) {
+    window.history.pushState(
+      {},
+      "",
+      `?collection=${collectionId}&token=${tokenId}`
+    );
   }
 });
 
@@ -83,14 +97,28 @@ const shuffleArray = (array: Holder[]) => {
   return array;
 };
 
-onMounted(() => {
+onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const collection = urlParams.get("collection");
   const token = urlParams.get("token");
   if (collection && token) {
     collectionId.value = collection;
     tokenId.value = token;
+    getTokenData(collection, token);
   }
+
+  // watch query params changes
+  window.addEventListener("popstate", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const collection = urlParams.get("collection");
+    const token = urlParams.get("token");
+    if (collection && token) {
+      collectionId.value = collection;
+      tokenId.value = token;
+
+      getTokenData(collection, token);
+    }
+  });
 });
 </script>
 
