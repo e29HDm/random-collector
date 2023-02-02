@@ -26,7 +26,7 @@ watch([collectionId, tokenId], async ([collectionId, tokenId]) => {
   const data = await client.request(`
 query Collectors {
   token(
-    where: {token_id: {_eq: "61"}, fa_contract: {_eq: "KT1Bha1xqnWAddhkukzUyq11cs5AZ7o1VYs9"}}
+    where: {token_id: {_eq: ${tokenId}}, fa_contract: {_eq: ${collectionId}}}
   ) {
     name
     supply
