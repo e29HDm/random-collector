@@ -96,7 +96,7 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-gray-200 flex flex-col">
-    <main class="grid grid-cols-2 gap-16 py-10 px-3">
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-16 py-10 px-3">
       <div class="flex flex-col space-y-4 bg-white rounded-md shadow-md p-4">
         <h1 class="text-2xl font-bold">Find a token</h1>
         <div class="flex space-x-4 items-center">
